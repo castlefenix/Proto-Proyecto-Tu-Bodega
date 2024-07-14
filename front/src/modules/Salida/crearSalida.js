@@ -74,7 +74,7 @@ function CrearSalida() {
 
     const leerProductos = () => {
         setProductosSeleccionados([]);
-        axios.get("http://192.168.2.6:3001/productos/leer")
+        axios.get("http://192.168.2.4:3001/productos/leer")
             .then((response) => {
                 const productosConContador = response.data.map(producto => ({
                     ...producto,
@@ -92,7 +92,7 @@ function CrearSalida() {
             <div className="scrollTabla" style={{ overflowY: 'auto', height: '80%' }}>
                 {listaProductos.map((producto, index) => (
                     <Card key={index} style={{ width: '18rem', marginBottom: '50px' }}>
-                        <Card.Img className='mt-2' variant="top" src={`http://192.168.2.6:3001/${producto.ruta_imagen}`} style={{ width: '100px',height:'100px', margin: '0 auto' }} />
+                        <Card.Img className='mt-2' variant="top" src={`http://192.168.2.4:3001/${producto.ruta_imagen}`} style={{ width: '100px',height:'100px', margin: '0 auto' }} />
                         <Card.Body>
                             <Card.Title>{producto.nombre_producto}</Card.Title>
                             <Card.Text>{producto.descripcion_producto}</Card.Text>

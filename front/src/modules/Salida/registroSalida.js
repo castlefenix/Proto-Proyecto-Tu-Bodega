@@ -12,7 +12,7 @@ const InformeSalidas = () => {
 
     const obtenerSalidas = async () => {
         try {
-            const response = await axios.get('http://192.168.2.6:3001/salidas/registro');
+            const response = await axios.get('http://192.168.2.4:3001/salidas/registro');
     
             // Ordena los datos por salidas_id en orden descendente
             const datosOrdenados = response.data.datos.sort((a, b) => b.salidas_id - a.salidas_id);

@@ -18,7 +18,7 @@ const EliminarEmpleado = ({ visible, onClose, empleadoId, empleadoNombre, onDele
         }
 
         try {
-            const response = await axios.delete(`http://192.168.2.6:3001/empleados/eliminar/${empleadoId}`, {
+            const response = await axios.delete(`http://192.168.2.4:3001/empleados/eliminar/${empleadoId}`, {
                 params: {
                     correo: userData.correo,
                     password: adminPassword

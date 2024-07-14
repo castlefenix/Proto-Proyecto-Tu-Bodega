@@ -7,7 +7,7 @@ function HeaderL() {
         <div className="logo">
             <img src={logoImage} alt="Logo-software-tu-bodega" height="40PX" />
         </div>
-        <a href="http://localhost:3000/"><h1 className="caja">📦</h1></a>
+        <a href="http://192.168.2.4:3000/"><h1 className="caja">📦</h1></a>
     </header>
     )
 }

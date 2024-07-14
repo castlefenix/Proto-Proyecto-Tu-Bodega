@@ -82,7 +82,7 @@ function ListaProductos() {
     };
 
     const leerProductos = () => {
-        Axios.get("http://192.168.2.6:3001/productos/leer")
+        Axios.get("http://192.168.2.4:3001/productos/leer")
             .then((response) => {
                 setListaProductos(response.data);
                 limpiarCampos();
@@ -95,7 +95,7 @@ function ListaProductos() {
     const actualizar = async (e) => {
         e.preventDefault();
         try {
-            const response = await Axios.put("http://192.168.2.6:3001/productos/actualizar", {
+            const response = await Axios.put("http://192.168.2.4:3001/productos/actualizar", {
                 id: id, //del producto a actualizar
                 nombre: nombre, //del producto a actualizar
                 descripcion: descripcion, //del producto a actualizar
@@ -115,7 +115,7 @@ function ListaProductos() {
     };
 
     const eliminarProducto = (id) => {
-        Axios.delete(`http://192.168.2.6:3001/productos/eliminar/${id}`).then(() => {
+        Axios.delete(`http://192.168.2.4:3001/productos/eliminar/${id}`).then(() => {
             Swal.fire("Éxito", "producto eliminado con éxito", "success");
             handleCloseDos();
         }).catch((error)=>{

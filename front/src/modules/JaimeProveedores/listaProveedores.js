@@ -66,7 +66,7 @@ function ListaProveedores() {
     };
 
     const leerProveedores = () => {
-        Axios.get("http://192.168.2.6:3001/proveedores/leer")
+        Axios.get("http://192.168.2.4:3001/proveedores/leer")
             .then((response) => {
                 setListaProveedores(response.data);
                 limpiarCampos();
@@ -79,7 +79,7 @@ function ListaProveedores() {
     const actualizar = async (e) => {
         e.preventDefault();
         try {
-            const response = await Axios.put("http://192.168.2.6:3001/proveedores/actualizar", {
+            const response = await Axios.put("http://192.168.2.4:3001/proveedores/actualizar", {
                 id: id, //del proveedor a actualizar
                 nit: nit, //del proveedor a actualizar
                 nombre: nombre, //del proveedor a actualizar
@@ -96,7 +96,7 @@ function ListaProveedores() {
     };
 
     const eliminarProveedores = (id) => {
-        Axios.delete(`http://192.168.2.6:3001/proveedores/eliminar/${id}`).then(() => {
+        Axios.delete(`http://192.168.2.4:3001/proveedores/eliminar/${id}`).then(() => {
             Swal.fire("Éxito", "proveedor eliminado con éxito", "success");
             handleCloseDos();
         }).catch((error)=>{

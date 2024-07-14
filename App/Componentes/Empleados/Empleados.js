@@ -20,7 +20,7 @@ const Empleados = ({ navigation }) => {
 
     const fetchEmpleados = async () => {
         try {
-            const response = await axios.get('http://192.168.2.6:3001/empleados/leer');
+            const response = await axios.get('http://192.168.2.4:3001/empleados/leer');
             setEmpleados(response.data);
         } catch (error) {
             console.error('Error fetching empleados:', error);

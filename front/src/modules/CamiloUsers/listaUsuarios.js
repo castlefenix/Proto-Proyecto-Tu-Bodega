@@ -83,7 +83,7 @@ function ListarUsuarios() {
     };
 
     const leerUsuarios = () => {
-        Axios.get("http://192.168.2.6:3001/empleados/leer")
+        Axios.get("http://192.168.2.4:3001/empleados/leer")
             .then((response) => {
                 setListaUsuarios(response.data);
                 limpiarCampos();
@@ -97,7 +97,7 @@ function ListarUsuarios() {
         e.preventDefault();
         if (!validarFormulario()) return;
         try {
-            const response = await Axios.put("http://192.168.2.6:3001/empleados/actualizar", {
+            const response = await Axios.put("http://192.168.2.4:3001/empleados/actualizar", {
                 id: id, //del usuario a actualizar
                 nombre: nombre, //del usuario a actualizar
                 apellido: apellido, //del usuario a actualizar
@@ -116,7 +116,7 @@ function ListarUsuarios() {
     };
 
     const eliminar = () => {
-        Axios.delete(`http://192.168.2.6:3001/empleados/eliminar/${id}?correo=${encodeURIComponent(correoU)}&password=${encodeURIComponent(contraAdmi)}`)
+        Axios.delete(`http://192.168.2.4:3001/empleados/eliminar/${id}?correo=${encodeURIComponent(correoU)}&password=${encodeURIComponent(contraAdmi)}`)
             .then(() => {
                 Swal.fire("Éxito", "Usuario eliminado con éxito", "success");
                 handleCloseDos()

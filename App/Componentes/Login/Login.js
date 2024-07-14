@@ -49,7 +49,7 @@ const LoginScreen = () => {
         console.log(`correo => ${email}`);
         console.log(`contraseña => ${password}`);
         try {
-            const response = await axios.post('http://192.168.2.6:3001/login/validar', {
+            const response = await axios.post('http://192.168.2.4:3001/login/validar', {
                 rol: parseInt(userType),
                 correo: email,
                 contra: password

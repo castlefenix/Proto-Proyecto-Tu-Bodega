@@ -41,7 +41,7 @@ function CrearProveedores() {
         event.preventDefault();
         if (!ValidarFormulario()) return;
 
-        Axios.post('http://192.168.2.6:3001/proveedores/crear', {
+        Axios.post('http://192.168.2.4:3001/proveedores/crear', {
             nit: nit,
             nombre: nombre,
             correo: correo,

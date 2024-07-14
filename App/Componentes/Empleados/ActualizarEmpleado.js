@@ -53,7 +53,7 @@ const ActualizarEmpleado = ({ visible, onClose, empleado, onUpdate, }) => {
         if (!validarFormulario()) return;
 
         const actualizarEmpleado = async () => {
-            return axios.put("http://192.168.2.6:3001/empleados/actualizar", {
+            return axios.put("http://192.168.2.4:3001/empleados/actualizar", {
                 id: updatedEmpleado.id,
                 idUser: userData.idUser,
                 nombre: updatedEmpleado.nombre_empleado,

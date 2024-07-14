@@ -13,7 +13,7 @@ const Salidas = ({ navigation }) => {
 
     const fetchSalidas = async () => {
         try {
-            const response = await axios.get('http://192.168.2.6:3001/salidas/registro');
+            const response = await axios.get('http://192.168.2.4:3001/salidas/registro');
             const datosFormateados = response.data.datos.map(salida => {
                 if (typeof salida.productos === 'string' && typeof salida.descripciones === 'string' && typeof salida.Unidades === 'string') {
                     const productosArray = salida.productos.split(', ');

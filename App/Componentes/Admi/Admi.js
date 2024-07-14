@@ -19,7 +19,7 @@ const Admi = () => {
             return;
         }
         try {
-            const response = await axios.get(`http://192.168.2.6:3001/empleados/leer/${id}`);
+            const response = await axios.get(`http://192.168.2.4:3001/empleados/leer/${id}`);
             if (response.data && response.data.nombre_empleado) {
                 setUser(response.data.nombre_empleado);
             } else {

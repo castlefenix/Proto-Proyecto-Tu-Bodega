@@ -61,7 +61,7 @@ const CrearEmpleado = ({ visible, onClose, onCreate }) => {
         if (!validarFormulario()) return;
 
         try {
-            const response = await axios.post("http://192.168.2.6:3001/empleados/crear", {
+            const response = await axios.post("http://192.168.2.4:3001/empleados/crear", {
                 nombre: newEmpleado.nombre_empleado,
                 apellido: newEmpleado.apellido_empleado,
                 correo: newEmpleado.correo_empleado,

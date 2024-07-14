@@ -71,7 +71,7 @@ function ListaClientes() {
     //avance martes
     const leerClientes = async () => {
         try {
-            const clientesList = await Axios.get("http://192.168.2.6:3001/clientes/leer");
+            const clientesList = await Axios.get("http://192.168.2.4:3001/clientes/leer");
             setListaClientes(clientesList.data.respuesta);
             limpiarCampos();
         } catch (error) {
@@ -82,7 +82,7 @@ function ListaClientes() {
     const actualizar = async (e) => {
         e.preventDefault();
         try {
-            const response = await Axios.put("http://192.168.2.6:3001/clientes/actualizar", {
+            const response = await Axios.put("http://192.168.2.4:3001/clientes/actualizar", {
                 id: id, //del cliente a actualizar
                 nombre: nombre, //del cliente a actualizar
                 apellido: apellido, //del cliente a actualizar
@@ -100,7 +100,7 @@ function ListaClientes() {
     };
 
     const eliminarCliente = (id) => {
-        Axios.delete(`http://192.168.2.6:3001/clientes/eliminar/${id}`).then(() => {
+        Axios.delete(`http://192.168.2.4:3001/clientes/eliminar/${id}`).then(() => {
             Swal.fire("Éxito", "cliente eliminado con éxito", "success");
             handleCloseDos();
         }).catch((error)=>{

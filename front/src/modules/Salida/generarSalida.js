@@ -37,7 +37,7 @@ function GenerarSalida({ abrirModal, cerrarModal, productosSeleccionados }) {//q
     const leerClientes = async () => {
         fechaActual();
         try {
-            const clientesList = await axios.get("http://192.168.2.6:3001/clientes/leer");
+            const clientesList = await axios.get("http://192.168.2.4:3001/clientes/leer");
             setListaClientes(clientesList.data.respuesta);
         } catch (error) {
             Swal.fire("Error", error.response ? error.response.data.mensaje : "No se recibió respuesta del servidor", "error");
@@ -52,7 +52,7 @@ function GenerarSalida({ abrirModal, cerrarModal, productosSeleccionados }) {//q
                 return;
             }
         try {
-            const response = await axios.post("http://192.168.2.6:3001/salidas/agregar", {
+            const response = await axios.post("http://192.168.2.4:3001/salidas/agregar", {
                 fecha: fecha,
                 idCliente: idCliente,
                 idUser: idUser
@@ -66,7 +66,7 @@ function GenerarSalida({ abrirModal, cerrarModal, productosSeleccionados }) {//q
     //enviar salida vs producto
     const enviarSalidaProducto = async (id) => {
         try {
-            const response = await axios.post(`http://192.168.2.6:3001/salidas/agregar/svsp`, {
+            const response = await axios.post(`http://192.168.2.4:3001/salidas/agregar/svsp`, {
                 idsalida: id,
                 productos: listaPro,
             });
