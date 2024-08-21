@@ -7,9 +7,8 @@ import "../../css/Usuarios.css";
 import { useAuth } from "../../auth/AuthContext.js";
 
 function ListarUsuarios() {
-    //variable global
     const { correoU } = useAuth();
-    //formulario actualizacion
+
     const [id, setId] = useState('');
     const [nombre, setNombre] = useState('');
     const [apellido, setApellido] = useState('');
@@ -18,36 +17,30 @@ function ListarUsuarios() {
     const [rol, setRol] = useState('');
     const [contraAdmi, setContraAdmi] = useState('');
 
-
-    //modal actualizar
     const [show, setShow] = useState(false);
     const handleClose = () => {
-        setShow(false)
+        setShow(false);
         limpiarCampos();
     };
     const handleShow = () => setShow(true);
 
-    //modal eliminar
     const [showDos, setShowDos] = useState(false);
     const handleCloseDos = () => {
-        setShowDos(false)
+        setShowDos(false);
         leerUsuarios();
     };
     const handleShowDos = () => setShowDos(true);
 
-
-    //lista
     const [listaUsuarios, setListaUsuarios] = useState([]);
     useEffect(() => {
         leerUsuarios();
     }, []);
 
-    //eliminar usuario
     const eliminarUsuario = (dato) => {
         handleShowDos();
-        setId(dato.id)
-    }
-    //editar usuarios
+        setId(dato.id);
+    };
+
     const editarUser = (dato) => {
         handleShow();
         setNombre(dato.nombre_empleado);
@@ -57,7 +50,6 @@ function ListarUsuarios() {
         setId(dato.id);
     };
 
-    //limpiar campos
     const limpiarCampos = () => {
         setNombre("");
         setApellido("");
@@ -68,7 +60,6 @@ function ListarUsuarios() {
         setContraNueva("");
     };
 
-    //validacion formulario actualizacion
     const validarFormulario = () => {
         const regexCorreo = /^(?=.{1,64}@)[A-Za-z0-9]+(?:[._-][A-Za-z0-9]+)*@[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*(?:\.[A-Za-z]{2,})+$/;
         if (!nombre.trim() || !apellido.trim() || !correo.trim() || !contraAdmi.trim()) {
@@ -83,7 +74,7 @@ function ListarUsuarios() {
     };
 
     const leerUsuarios = () => {
-        Axios.get("http://192.168.2.4:3001/empleados/leer")
+        Axios.get("http://localhost:3001/empleados/leer")
             .then((response) => {
                 setListaUsuarios(response.data);
                 limpiarCampos();
@@ -97,15 +88,15 @@ function ListarUsuarios() {
         e.preventDefault();
         if (!validarFormulario()) return;
         try {
-            const response = await Axios.put("http://192.168.2.4:3001/empleados/actualizar", {
-                id: id, //del usuario a actualizar
-                nombre: nombre, //del usuario a actualizar
-                apellido: apellido, //del usuario a actualizar
-                correo: correo, //del usuario a actualizar
-                contra: contraNueva, //del usuario a actualizar
-                rol: rol, //del usuario a actualizar
-                correoU: correoU, // correo de la cuenta administador como medida de calidacion
-                contraAdmi: contraAdmi, //contraseña del admi para validar la actualizacion
+            const response = await Axios.put("http://localhost:3001/empleados/actualizar", {
+                id: id,
+                nombre: nombre,
+                apellido: apellido,
+                correo: correo,
+                contra: contraNueva,
+                rol: rol,
+                correoU: correoU,
+                contraAdmi: contraAdmi,
             });
             Swal.fire("Éxito", "Usuario actualizado con éxito", "success");
             leerUsuarios();
@@ -116,16 +107,15 @@ function ListarUsuarios() {
     };
 
     const eliminar = () => {
-        Axios.delete(`http://192.168.2.4:3001/empleados/eliminar/${id}?correo=${encodeURIComponent(correoU)}&password=${encodeURIComponent(contraAdmi)}`)
+        Axios.delete(`http://localhost:3001/empleados/eliminar/${id}?correo=${encodeURIComponent(correoU)}&password=${encodeURIComponent(contraAdmi)}`)
             .then(() => {
                 Swal.fire("Éxito", "Usuario eliminado con éxito", "success");
-                handleCloseDos()
+                handleCloseDos();
             })
             .catch((error) => {
                 Swal.fire("Error", error.response ? error.response.data.mensaje : "No se recibió respuesta del servidor", "error");
             });
     };
-
 
     return (
         <div className="container">
@@ -135,56 +125,59 @@ function ListarUsuarios() {
                         <tr>
                             <th>Nombre</th>
                             <th>Apellido</th>
-                            <th>correo</th>
-                            <th>cargo</th>
-                            <th className="columnaFinal">opciones</th>
+                            <th>Correo</th>
+                            <th>Cargo</th>
+                            <th className="columnaFinal">Opciones</th>
                         </tr>
                     </thead>
                 </table>
                 <div className="scrollTabla" style={{ overflowY: 'auto' }}>
-                    <table className="table table-striped table-hover contenido" >
+                    <table className="table table-striped table-hover contenido">
                         <tbody>
-                            {
-                                listaUsuarios.map((dato, key) => {
-                                    return (
-                                        <tr key={key}>
-                                            <td>{dato.nombre_empleado}</td>
-                                            <td>{dato.apellido_empleado}</td>
-                                            <td>{dato.correo_empleado}</td>
-                                            <td>{dato.rol_empleados_id === 1 ?
-                                                <span>Administrador</span> :
-                                                <span>Almacenista</span>}</td>
-                                            <td className="columnaFinal">
-                                                <div className="filaFinal">
-                                                    <button className="botones btnEdit" variant="primary"
-                                                        onClick={() => { editarUser(dato); }}>
-                                                        <i className='bx bx-edit-alt'></i>
+                            {listaUsuarios.map((dato, key) => {
+                                return (
+                                    <tr key={key}>
+                                        <td>{dato.nombre_empleado}</td>
+                                        <td>{dato.apellido_empleado}</td>
+                                        <td>{dato.correo_empleado}</td>
+                                        <td>
+                                            {dato.rol_empleados_id === 1 ? (
+                                                <span>Administrador</span>
+                                            ) : (
+                                                <span>Almacenista</span>
+                                            )}
+                                        </td>
+                                        <td className="columnaFinal">
+                                            <div className="filaFinal">
+                                                <button
+                                                    className="botones btnEdit"
+                                                    onClick={() => editarUser(dato)}
+                                                >
+                                                    <i className='bx bx-edit-alt'></i>
+                                                </button>
+                                                {dato.id === 1 ? (
+                                                    <button hidden onClick={() => eliminarUsuario(dato)} className="botones btnDele">
+                                                        <i className='bx bx-trash'></i>
                                                     </button>
-                                                    {dato.id == 1 ?
-                                                        <button hidden
-                                                            onClick={() => { eliminarUsuario(dato); }}
-                                                            className="botones btnDele">
-                                                            <i className='bx bx-trash'></i>
-                                                        </button> :
-                                                        <button
-                                                            onClick={() => { eliminarUsuario(dato); }}
-                                                            className="botones btnDele">
-                                                            <i className='bx bx-trash'></i>
-                                                        </button>
-                                                    }
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    )
-                                })
-                            }
+                                                ) : (
+                                                    <button onClick={() => eliminarUsuario(dato)} className="botones btnDele">
+                                                        <i className='bx bx-trash'></i>
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>
-                <button className="btonLista btn btn-success" onClick={leerUsuarios}>Actualizar Lista 🔃</button>
+                <button className="btonLista btn btn-success" onClick={leerUsuarios}>
+                    Actualizar Lista 🔃
+                </button>
             </div>
             <div className="container actualizar" id="formActu">
-                <Modal show={show} onHide={handleClose}>
+                <Modal show={show} onHide={handleClose} aria-labelledby="modal-actualizar-usuario" aria-hidden={!show}>
                     <Modal.Header closeButton>
                         <Modal.Title>Actualizar usuario</Modal.Title>
                     </Modal.Header>
@@ -192,86 +185,136 @@ function ListarUsuarios() {
                         <form>
                             <div className="input-group mb-3">
                                 <span className="input-group-text">Nombre:</span>
-                                <input value={nombre} id="nombreInput" onChange={(event) => { setNombre(event.target.value) }} type="text"
-                                    className="form-control" placeholder="Nombre" aria-label="Username" required>
-                                </input>
+                                <input
+                                    value={nombre}
+                                    id="nombreInput"
+                                    onChange={(event) => setNombre(event.target.value)}
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Nombre"
+                                    aria-label="Nombre"
+                                    required
+                                />
                             </div>
 
                             <div className="input-group mb-3">
                                 <span className="input-group-text">Apellido:</span>
-                                <input value={apellido} id="apellidoInput" onChange={(event) => { setApellido(event.target.value) }} type="text"
-                                    className="form-control" placeholder="Apellido" required>
-                                </input>
+                                <input
+                                    value={apellido}
+                                    id="apellidoInput"
+                                    onChange={(event) => setApellido(event.target.value)}
+                                    type="text"
+                                    className="form-control"
+                                    placeholder="Apellido"
+                                    required
+                                />
                             </div>
 
                             <div className="input-group mb-3">
                                 <span className="input-group-text">Correo:</span>
-                                <input value={correo} id="correoInput" onChange={(event) => { setCorreo(event.target.value) }} type="email"
-                                    className="form-control" placeholder="Correo" required>
-                                </input>
+                                <input
+                                    value={correo}
+                                    id="correoInput"
+                                    onChange={(event) => setCorreo(event.target.value)}
+                                    type="email"
+                                    className="form-control"
+                                    placeholder="Correo"
+                                    required
+                                />
                             </div>
 
                             <div className="input-group mb-3">
-                                <span className="input-group-text">Contraseña nueva :</span>
-                                <input value={contraNueva} id="repetirContrasenaInput" onChange={(event) => { setContraNueva(event.target.value) }} type="password"
-                                    className="form-control" placeholder="Ejemplo de contraseña: Contra123">
-                                </input>
+                                <span className="input-group-text">Contraseña nueva:</span>
+                                <input
+                                    value={contraNueva}
+                                    id="repetirContrasenaInput"
+                                    onChange={(event) => setContraNueva(event.target.value)}
+                                    type="password"
+                                    className="form-control"
+                                    placeholder="Ejemplo de contraseña: Contra123"
+                                />
                             </div>
-                            <div
-                                id="passwordHelpBlock"
-                                className="mensajeContra2">
+                            <div id="passwordHelpBlock" className="mensajeContra2">
                                 La contraseña debe tener 8-20 caracteres con letras y números, sin espacios, caracteres especiales ni emojis.
                             </div>
 
                             <div className="input-group mb-3">
                                 <span className="input-group-text">Rol:</span>
-
-                                {
-                                    id === 1 ?
-                                        <input type="text" className="form-control" placeholder="Administrador" disabled></input> :
-                                        <select value={rol} name="rol" className="form-select" onChange={(event) => { setRol(event.target.value) }} required>
-                                            <option value="" hidden>Seleccione su rol</option>
-                                            <option value="1">Administrador</option>
-                                            <option value="2">Almacenista</option>
-                                        </select>
-                                }
+                                {id === 1 ? (
+                                    <input type="text" className="form-control" placeholder="Administrador" disabled />
+                                ) : (
+                                    <select
+                                        value={rol}
+                                        name="rol"
+                                        className="form-select"
+                                        onChange={(event) => setRol(event.target.value)}
+                                        required
+                                    >
+                                        <option value="" hidden>
+                                            Seleccione su rol
+                                        </option>
+                                        <option value="1">Administrador</option>
+                                        <option value="2">Almacenista</option>
+                                    </select>
+                                )}
                             </div>
                         </form>
                     </Modal.Body>
                     <Modal.Footer>
                         <div className="input-group mb-3">
                             <span className="input-group-text">Contraseña:</span>
-                            <input id="contrasenaInput" onChange={(event) => { setContraAdmi(event.target.value) }} type="password"
-                                className="form-control" placeholder="contraseña de perfil Administrador" required>
-                            </input>
+                            <input
+                                id="contrasenaInput"
+                                onChange={(event) => setContraAdmi(event.target.value)}
+                                type="password"
+                                className="form-control"
+                                placeholder="contraseña de perfil Administrador"
+                                required
+                            />
                         </div>
-                        <span className="mensajeactu">Para poder efectuar un cambio se debe ingresar la contraseña del perfil administrador</span>
+                        <span className="mensajeactu">
+                            Para poder efectuar un cambio se debe ingresar la contraseña del perfil administrador
+                        </span>
                         <div className="btnActu">
-                            <button onClick={actualizar} type="button" className="btn btn-primary">Actualizar</button>
-                            <button onClick={handleClose} type="button" className="btn btn-danger">Cancelar</button>
+                            <button onClick={actualizar} type="button" className="btn btn-primary">
+                                Actualizar
+                            </button>
+                            <button onClick={handleClose} type="button" className="btn btn-danger">
+                                Cancelar
+                            </button>
                         </div>
                     </Modal.Footer>
                 </Modal>
-
             </div>
             <div className="container eliminar">
-                <Modal show={showDos} onHide={handleCloseDos}>
+                <Modal show={showDos} onHide={handleCloseDos} aria-labelledby="modal-eliminar-usuario" aria-hidden={!showDos}>
                     <Modal.Header closeButton>
                         <Modal.Title>Eliminar Usuario</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         <div className="input-group mb-3">
                             <span className="input-group-text">Contraseña:</span>
-                            <input id="contrasenaInput" onChange={(event) => { setContraAdmi(event.target.value) }} type="password"
-                                className="form-control" placeholder="contraseña de perfil Administrador" required>
-                            </input>
+                            <input
+                                id="contrasenaInput"
+                                onChange={(event) => setContraAdmi(event.target.value)}
+                                type="password"
+                                className="form-control"
+                                placeholder="contraseña de perfil Administrador"
+                                required
+                            />
                         </div>
-                        <span className="mensajeactu">Para poder efectuar un cambio se debe ingresar la contraseña del perfil administrador</span>
+                        <span className="mensajeactu">
+                            Para poder efectuar un cambio se debe ingresar la contraseña del perfil administrador
+                        </span>
                     </Modal.Body>
                     <Modal.Footer>
                         <div className="btnActu">
-                            <button onClick={eliminar} type="button" className="btn btn-primary">Eliminar</button>
-                            <button onClick={handleCloseDos} type="button" className="btn btn-danger">Cancelar</button>
+                            <button onClick={eliminar} type="button" className="btn btn-primary">
+                                Eliminar
+                            </button>
+                            <button onClick={handleCloseDos} type="button" className="btn btn-danger">
+                                Cancelar
+                            </button>
                         </div>
                     </Modal.Footer>
                 </Modal>
@@ -279,7 +322,5 @@ function ListarUsuarios() {
         </div>
     );
 }
-
-
 
 export default ListarUsuarios;

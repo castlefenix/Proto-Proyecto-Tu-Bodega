@@ -437,7 +437,7 @@ rutaEmpleado.put("/actualizar", async (req, res) => {
         if (error) {
             return res.status(500).json({ mensaje: 'Error en conexión con base de datos' });
         }
-        conexion.query("SELECT * FROM empleados WHERE id=?", idUser, (err, resultado) => {
+        conexion.query("SELECT * FROM empleados WHERE id=?", id, (err, resultado) => {
             if (err) {
                 return res.status(400).json({ mensaje: 'se totio' })
             }

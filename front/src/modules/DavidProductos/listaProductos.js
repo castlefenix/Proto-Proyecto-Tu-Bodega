@@ -4,6 +4,9 @@ import Modal from 'react-bootstrap/Modal';
 import Swal from 'sweetalert2'
 import Axios from "axios";
 import "../../css/Productos.css";
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+
 
 function ListaProductos() {
     //formulario actualizacion
@@ -82,7 +85,7 @@ function ListaProductos() {
     };
 
     const leerProductos = () => {
-        Axios.get("http://192.168.2.4:3001/productos/leer")
+        Axios.get("http://localhost:3001/productos/leer")
             .then((response) => {
                 setListaProductos(response.data);
                 limpiarCampos();
@@ -95,7 +98,7 @@ function ListaProductos() {
     const actualizar = async (e) => {
         e.preventDefault();
         try {
-            const response = await Axios.put("http://192.168.2.4:3001/productos/actualizar", {
+            const response = await Axios.put("http://localhost:3001/productos/actualizar", {
                 id: id, //del producto a actualizar
                 nombre: nombre, //del producto a actualizar
                 descripcion: descripcion, //del producto a actualizar
@@ -115,14 +118,41 @@ function ListaProductos() {
     };
 
     const eliminarProducto = (id) => {
-        Axios.delete(`http://192.168.2.4:3001/productos/eliminar/${id}`).then(() => {
+        Axios.delete(`http://localhost:3001/productos/eliminar/${id}`).then(() => {
             Swal.fire("Éxito", "producto eliminado con éxito", "success");
             handleCloseDos();
-        }).catch((error)=>{
+        }).catch((error) => {
             Swal.fire("Error", error.response ? error.response.data.mensaje : "No se recibió respuesta del servidor", "error");
             handleCloseDos();
         });
     };
+
+
+    const descargarRegistros = () => {
+        // Mapeo de los productos para el formato de Excel
+        const registrosParaExcel = listaProductos.map((producto) => ({
+            ID: producto.id,
+            Nombre: producto.nombre_producto,
+            Descripción: producto.descripcion_producto,
+            'Precio de Compra': producto.precio_compra_producto,
+            'Precio de Venta': producto.precio_venta_producto,
+            Unidades: producto.unidades_producto,
+            Fecha: new Date(producto.fecha_producto).toLocaleDateString('es'),
+            'Unidad de Medida': producto.nombre_unidaded_medida,
+            Proveedor: producto.nombre_proveedor
+        }));
+
+        // Crear el libro de trabajo y la hoja de trabajo
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(registrosParaExcel);
+
+        // Agregar la hoja al libro
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Productos');
+
+        // Generar el archivo Excel y descargarlo
+        XLSX.writeFile(workbook, 'Lista_Productos.xlsx');
+    };
+
 
     return (
         <div className="container">
@@ -179,7 +209,10 @@ function ListaProductos() {
                         </tbody>
                     </table>
                 </div>
-                <button className="btonLista btn btn-success" onClick={leerProductos}>Actualizar Lista 🔃</button>
+                <div className="d-flex w-100 mt-3">
+                    <button className="btonLista btn btn-success me-2 flex-grow-1" onClick={leerProductos}>Actualizar Lista 🔃</button>
+                    <button className="btonLista btn btn-primary flex-grow-1" onClick={descargarRegistros}>Descargar Registros 📑</button>
+                </div>
             </div>
             <div className="container actualizar" id="formActu">
                 <Modal show={show} onHide={handleClose}>
@@ -253,7 +286,7 @@ function ListaProductos() {
                     </Modal.Header>
                     <Modal.Footer>
                         <div className="btnActu">
-                            <button onClick={()=>{ eliminarProducto(id) }} type="button" className="btn btn-primary">Eliminar</button>
+                            <button onClick={() => { eliminarProducto(id) }} type="button" className="btn btn-primary">Eliminar</button>
                             <button onClick={handleCloseDos} type="button" className="btn btn-danger">Cancelar</button>
                         </div>
                     </Modal.Footer>

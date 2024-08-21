@@ -3,6 +3,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Modal from 'react-bootstrap/Modal';
 import Swal from 'sweetalert2';
 import Axios from "axios";
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 import "../../css/Clientes.css";
 
 function ListaClientes() {
@@ -54,7 +56,7 @@ function ListaClientes() {
         setCorreo(dato.correo_cliente);
         setTelefono(dato.telefono_cliente);
         setDireccion(dato.direccion_cliente);
-        setId(dato.id); 
+        setId(dato.id);
     };
 
     //limpiar campos
@@ -71,7 +73,7 @@ function ListaClientes() {
     //avance martes
     const leerClientes = async () => {
         try {
-            const clientesList = await Axios.get("http://192.168.2.4:3001/clientes/leer");
+            const clientesList = await Axios.get("http://localhost:3001/clientes/leer");
             setListaClientes(clientesList.data.respuesta);
             limpiarCampos();
         } catch (error) {
@@ -82,7 +84,7 @@ function ListaClientes() {
     const actualizar = async (e) => {
         e.preventDefault();
         try {
-            const response = await Axios.put("http://192.168.2.4:3001/clientes/actualizar", {
+            const response = await Axios.put("http://localhost:3001/clientes/actualizar", {
                 id: id, //del cliente a actualizar
                 nombre: nombre, //del cliente a actualizar
                 apellido: apellido, //del cliente a actualizar
@@ -100,13 +102,34 @@ function ListaClientes() {
     };
 
     const eliminarCliente = (id) => {
-        Axios.delete(`http://192.168.2.4:3001/clientes/eliminar/${id}`).then(() => {
+        Axios.delete(`http://localhost:3001/clientes/eliminar/${id}`).then(() => {
             Swal.fire("Éxito", "cliente eliminado con éxito", "success");
             handleCloseDos();
-        }).catch((error)=>{
+        }).catch((error) => {
             Swal.fire("Advertencia", "Este cliente esta vinculado con una salida, no deberia ser eliminado", "warning");
             handleCloseDos();
         });
+    };
+
+    const descargarRegistros = () => {
+        const registrosParaExcel = listaClientes.map(cliente => ({
+            Nombre: cliente.nombre_cliente,
+            Apellido: cliente.apellido_cliente,
+            Documento: cliente.documento_cliente,
+            Correo: cliente.correo_cliente,
+            Telefono: cliente.telefono_cliente,
+            Direccion: cliente.direccion_cliente
+        }));
+
+        // Crea un libro de trabajo y una hoja de trabajo
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(registrosParaExcel);
+
+        // Agrega la hoja de trabajo al libro de trabajo
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Clientes');
+
+        // Genera un archivo Excel y lo guarda
+        XLSX.writeFile(workbook, 'registros_clientes.xlsx');
     };
 
     return (
@@ -158,7 +181,15 @@ function ListaClientes() {
                         </tbody>
                     </table>
                 </div>
-                <button className="btonLista btn btn-success" onClick={leerClientes}>Actualizar Lista 🔃</button>
+                <div className="d-flex w-100 mt-5">
+                    <button className="btonLista btn btn-success me-2 flex-grow-1" onClick={leerClientes}>
+                        Actualizar Lista 🔃
+                    </button>
+                    <button className="btonLista btn btn-primary flex-grow-1" onClick={descargarRegistros}>
+                        Descargar Registros 📑
+                    </button>
+                </div>
+
             </div>
             <div className="container actualizar" id="formActu">
                 <Modal show={show} onHide={handleClose}>
@@ -220,7 +251,7 @@ function ListaClientes() {
                     </Modal.Header>
                     <Modal.Footer>
                         <div className="btnActu">
-                            <button onClick={()=>{ eliminarCliente(id) }} type="button" className="btn btn-primary">eliminarCliente</button>
+                            <button onClick={() => { eliminarCliente(id) }} type="button" className="btn btn-primary">eliminarCliente</button>
                             <button onClick={handleCloseDos} type="button" className="btn btn-danger">Cancelar</button>
                         </div>
                     </Modal.Footer>

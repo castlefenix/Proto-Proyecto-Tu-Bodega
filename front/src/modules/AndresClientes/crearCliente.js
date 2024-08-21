@@ -48,7 +48,7 @@ function CrearCliente() {
     const agregarCliente = (event) => {
         event.preventDefault(); // Evita que se envíe el formulario por defecto
         if (!validarFormulario()) return; // Si el formulario no es válido, detiene la ejecución de la función
-        Axios.post('http://192.168.2.4:3001/clientes/crear', { // Realiza una solicitud POST al servidor para agregar el cliente
+        Axios.post('http://localhost:3001/clientes/crear', { // Realiza una solicitud POST al servidor para agregar el cliente
             nombre: nombre,
             apellido: apellido,
             documento: documento,

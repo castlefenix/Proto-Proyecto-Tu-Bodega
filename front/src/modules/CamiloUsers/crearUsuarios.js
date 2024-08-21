@@ -69,7 +69,7 @@ function CrearUsuario() {
         if (!validarFormulario()) return;
 
         try {
-            await Axios.post("http://192.168.2.4:3001/empleados/crear", usuario);
+            await Axios.post("http://localhost:3001/empleados/crear", usuario);
             Swal.fire("Éxito", "Usuario agregado con éxito", "success");
             limpiarCampos();
         } catch (error) {

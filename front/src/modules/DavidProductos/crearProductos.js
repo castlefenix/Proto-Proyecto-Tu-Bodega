@@ -19,7 +19,7 @@ function CrearProductos() {
 
     useEffect(() => {
         const leerProveedores = () => {
-            Axios.get("http://192.168.2.4:3001/proveedores/leer")
+            Axios.get("http://localhost:3001/proveedores/leer")
                 .then((response) => {
                     setListaProveedores(response.data);
                 })
@@ -57,7 +57,7 @@ function CrearProductos() {
         fd.append('medida', medida);
         fd.append('proveedor', proveedor);
 
-        Axios.post('http://192.168.2.4:3001/productos/crear', fd, {
+        Axios.post('http://localhost:3001/productos/crear', fd, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }

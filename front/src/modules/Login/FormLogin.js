@@ -20,7 +20,7 @@ function FormLogin() {
             interfazUser = '/Almacenista'
         }
         evento.preventDefault();
-        Axios.post("http://192.168.2.4:3001/login/validar", {
+        Axios.post("http://localhost:3001/login/validar", {
             rol: rol,
             correo: correo,
             contra: contra
@@ -34,8 +34,8 @@ function FormLogin() {
                 // Si no, muestra un mensaje de error indicando que faltan datos
                 Swal.fire({
                     title: 'Error',
-                    text: 'Faltan datos en la respuesta del servidor.',
-                    icon: 'error',
+                    text: 'Contraseña o correo incorrecto.',
+                    icon: 'warning',
                     confirmButtonText: 'OK'
                 });
             }
