@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../../css/Registro.css';
-import { Accordion, Button, ListGroup, ListGroupItem, Table, Modal, Form } from 'react-bootstrap';
+import { Accordion, Button, ListGroup, ListGroupItem, Table, Modal, Form, Alert } from 'react-bootstrap';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 
@@ -16,7 +16,10 @@ const InformeSalidas = () => {
         descripcion: true,
         unidades: true
     });
+    const [fechaInicio, setFechaInicio] = useState('');
+    const [fechaFin, setFechaFin] = useState('');
     const [showModal, setShowModal] = useState(false);
+    const [alerta, setAlerta] = useState('');
 
     useEffect(() => {
         obtenerSalidas();
@@ -25,8 +28,8 @@ const InformeSalidas = () => {
     const obtenerSalidas = async () => {
         try {
             const response = await axios.get('http://localhost:3001/salidas/registro');
-
-            // Ordena los datos por salidas_id en orden descendente
+            
+            // Ordena y filtra los datos
             const datosOrdenados = response.data.datos.sort((a, b) => b.salidas_id - a.salidas_id);
 
             const datosFormateados = datosOrdenados.map(salida => {
@@ -52,7 +55,10 @@ const InformeSalidas = () => {
         }
     };
 
-    const toggleModal = () => setShowModal(!showModal);
+    const toggleModal = () => {
+        setShowModal(!showModal);
+        setAlerta('');
+    };
 
     const handleChangeCampo = (campo) => {
         setCamposSeleccionados(prevState => ({
@@ -62,7 +68,28 @@ const InformeSalidas = () => {
     };
 
     const descargarRegistros = () => {
-        const registrosParaExcel = salidas.map(salida => {
+        const registrosFiltrados = salidas.filter(salida => {
+            const fechaSalida = new Date(salida.fecha_salida);
+            const fechaInicioParsed = fechaInicio ? new Date(fechaInicio) : null;
+            const fechaFinParsed = fechaFin ? new Date(fechaFin) : null;
+
+            if (fechaInicioParsed && fechaFinParsed) {
+                return fechaSalida >= fechaInicioParsed && fechaSalida <= fechaFinParsed;
+            } else if (fechaInicioParsed) {
+                return fechaSalida >= fechaInicioParsed;
+            } else if (fechaFinParsed) {
+                return fechaSalida <= fechaFinParsed;
+            } else {
+                return true;
+            }
+        });
+
+        if (registrosFiltrados.length === 0) {
+            setAlerta('No se encontraron salidas para este rango de fechas.');
+            return;
+        }
+
+        const registrosParaExcel = registrosFiltrados.map(salida => {
             return salida.productos.map(producto => {
                 let registro = {};
                 if (camposSeleccionados.fecha) registro.Fecha = new Date(salida.fecha_salida).toLocaleDateString();
@@ -80,6 +107,8 @@ const InformeSalidas = () => {
         const worksheet = XLSX.utils.json_to_sheet(registrosParaExcel);
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Registros');
         XLSX.writeFile(workbook, 'registros_salidas.xlsx');
+
+        toggleModal();
     };
 
     return (
@@ -144,10 +173,10 @@ const InformeSalidas = () => {
                 <Button variant='primary' style={{ flex: 1 }} onClick={toggleModal}>Elegir Campos y Exportar 📑</Button>
             </div>
 
-            {/* Modal para seleccionar los campos */}
+            {/* Modal para seleccionar los campos y el filtro de fecha */}
             <Modal show={showModal} onHide={toggleModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Selecciona los campos para descargar</Modal.Title>
+                    <Modal.Title>Selecciona los campos y el rango de fechas para descargar</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
@@ -157,6 +186,23 @@ const InformeSalidas = () => {
                             checked={camposSeleccionados.fecha}
                             onChange={() => handleChangeCampo('fecha')} 
                         />
+                        {camposSeleccionados.fecha && (
+                            <>
+                                <Form.Label>Filtrar por fecha:</Form.Label>
+                                <Form.Control
+                                    type="date"
+                                    placeholder="Fecha de inicio"
+                                    value={fechaInicio}
+                                    onChange={(e) => setFechaInicio(e.target.value)}
+                                />
+                                <Form.Control
+                                    type="date"
+                                    placeholder="Fecha de fin"
+                                    value={fechaFin}
+                                    onChange={(e) => setFechaFin(e.target.value)}
+                                />
+                            </>
+                        )}
                         <Form.Check 
                             type="checkbox" 
                             label="Número" 
@@ -194,14 +240,11 @@ const InformeSalidas = () => {
                             onChange={() => handleChangeCampo('unidades')} 
                         />
                     </Form>
+                    {alerta && <Alert variant="warning" className="mt-3">{alerta}</Alert>}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" onClick={() => { descargarRegistros(); toggleModal(); }}>
-                        Descargar
-                    </Button>
-                    <Button variant="secondary" onClick={toggleModal}>
-                        Cancelar
-                    </Button>
+                    <Button variant="secondary" onClick={toggleModal}>Cancelar</Button>
+                    <Button variant="primary" onClick={descargarRegistros}>Descargar</Button>
                 </Modal.Footer>
             </Modal>
         </div>
